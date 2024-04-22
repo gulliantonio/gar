@@ -9,30 +9,20 @@ from vertexai.generative_models import (
     Part,
     Tool,
 )
-import requests
 
-get_exchange_rate_func = FunctionDeclaration(
-    name="get_exchange_rate",
-    description="Get the exchange rate for currencies between countries",
+retrieve_algorithm_from_library = FunctionDeclaration(
+    name="retrieve_algorithm_from_library",
+    description="Get the get_algorithm from code library",
     parameters={
     "type": "object",
     "properties": {
-        "currency_date": {
+        "name_algorithm": {
             "type": "string",
-            "description": "A date that must always be in YYYY-MM-DD format or the value 'latest' if a time period is not specified"
+            "description": "the name of the algorithm to retrieve from library"
         },
-        "currency_from": {
-            "type": "string",
-            "description": "The currency to convert from in ISO 4217 format"
-        },
-        "currency_to": {
-            "type": "string",
-            "description": "The currency to convert to in ISO 4217 format"
-        }
     },
          "required": [
-            "currency_from",
-            "currency_date",
+            "name_algorithm",
       ]
   },
 )
@@ -43,28 +33,30 @@ def init():
 def call_model():
   model = GenerativeModel("gemini-1.0-pro")
 
-  exchange_rate_tool = Tool(
-    function_declarations=[get_exchange_rate_func],
+  retrieve_tool = Tool(
+    function_declarations=[retrieve_algorithm_from_library],
   )
 
-  prompt = """What is the exchange rate from Australian dollars to Swedish krona?
-  How much is 500 Australian dollars worth in Swedish krona?"""
+  user_prompt = """what is the code for quicksort?"""
+  prompt = """
+    
+    Use the get_algorithm to search and retrieve algorithms from a library
+
+    Answer the following question:
+    """ + user_prompt 
 
   response = model.generate_content(
     prompt,
-    tools=[exchange_rate_tool],
+    tools=[retrieve_tool],
   )
 
-  print(response.candidates[0].content)
+  print('content:')
+  print (response.candidates[0].content)
 
-  params = {}
-  for key, value in response.candidates[0].content.parts[0].function_call.args.items():
-    params[key[9:]] = value
-  params
 
-  url = f"https://api.frankfurter.app/{params['date']}"
-  api_response = requests.get(url, params=params)
-  print (api_response.text)
+#  url = f"https://api.frankfurter.app/{params['date']}"
+#  api_response = requests.get(url, params=params)
+#  print (api_response.text)
 
 
 init()
