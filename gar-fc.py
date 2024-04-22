@@ -12,13 +12,13 @@ from vertexai.generative_models import (
 
 retrieve_algorithm_from_library = FunctionDeclaration(
     name="retrieve_algorithm_from_library",
-    description="Get the get_algorithm from code library",
+    description="used to retrieve the algorithms from code library",
     parameters={
     "type": "object",
     "properties": {
         "name_algorithm": {
             "type": "string",
-            "description": "the name of the algorithm to retrieve from library"
+            "description": "the name of the algorithm to retrieve from our library"
         },
     },
          "required": [
@@ -40,7 +40,7 @@ def call_model():
   user_prompt = """what is the code for quicksort?"""
   prompt = """
     
-    Use the get_algorithm to search and retrieve algorithms from a library
+    Using the retrieve_algorithm_from_library function to search and retrieve algorithms from a library
 
     Answer the following question:
     """ + user_prompt 
